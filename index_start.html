@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
+
+    <title>NCAA Investigation</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/styles.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">NCAA</a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <h1>NCAA Investigation Characters</h1>
+        <p class="lead">Who was involved in the investigation and where are they now?</p>
+	  <h3>Click the photos to learn more about each character</h3>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+	  <div id="phototop"></div>
+          
+        </div>
+      </div>
+    </div><!-- /.container -->
+
+    <div id="modals"></div>
+    <div class="row"></div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+    <script>
+      var htmlBottom = "";
+      var htmlNav = "<ul>";
+      var htmlTop = "";
+      var htmlModal ="";
+      
+      
+      $(document).ready(function() {
+	$("#message").text("DOM Loaded and Ready");
+	loadXML();
+	
+      });
+      
+      function loadXML(){
+	$("#message").text("Starting to loadXML()");
+	
+	$.ajax({
+	  type:"GET",
+	  url:"ncaa.xml",
+	  dataType: "xml",
+	  success: parseXML
+	  
+	  })
+	
+	}// end loadXML
+	
+	function parseXML(xml){
+	  console.log(xml);
+	  $(xml).find("person").each(function(index){
+	    //builds left nav
+	    tempName = $(this).attr("name")
+	    tempLast = $(this).attr("last")
+	    tempPhoto = $(this).find("photo").text()
+	    
+	    //htmlTop += "<a class='negativeMargin' id='" + tempLast + "' href='' >"
+	    //htmlTop += "<button data-toggle='modal' datamodel='" tempLast "Modal'>"
+	    htmlTop += "<div class='img-container'>";
+	    htmlTop += "<img class='person' onclick=\"openModal(\'"+tempLast+"\')\" src='" + tempPhoto + "' width='100px' height='100px' alt='player'/>";
+	    htmlTop += "<h4>" + tempName + "</h4></div>";
+	      
+	    htmlNav += "<li><a href='#" + tempName + "'>" + tempLast + "</a></li>";
+	    
+	    
+	    htmlModal += '<div class="modal fade ' + tempName + '-modal" tabindex="-1" role="dialog" aria-labelledby="' + tempLast + '-modal" aria-hidden="true">';
+	    htmlModal += '<div class="modal-dialog modal-lg"><div class="modal-content">';
+	    htmlModal += '<h4 class="modal-header">' + tempName + '</h4>';
+	    htmlModal += '<div class="modal-body">';
+	    htmlModal += "<img class='person' src='" + tempPhoto + "' width='100px' height='100px' alt='player'/>";
+	    htmlModal += "<ul class='info'><li><p><strong>Occupation:</strong> " + $(this).find("occupation").text() + "</p></li>";
+	    htmlModal += "<li><p><strong>Location:</strong> " + $(this).find("location").text() + "</p></li></ul>";
+	    htmlModal += "<p>" + $(this).find("role").text() + "</p>";
+	    htmlModal += '</div></div></div></div>';
+        })
+	  
+	  htmlNav += "</ul>";
+	  $("#phototop").append(htmlTop);
+	  $("#navlist").append(htmlNav);
+	  $("#person").append(htmlBottom);
+	  $("#modals").append(htmlModal);
+	  
+	  
+	}
+      
+      function openModal(lastName){
+	$('.' + lastName+"-modal").modal('show')
+      }
+      
+    </script>
+    
+  </body>
+</html>
